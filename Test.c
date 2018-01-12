@@ -7,35 +7,29 @@
 int main( void)
 {
 	initController();
+
 	while(1)
 	{
-/*		xySpeed(0, 60);
+
+		moveSpin(60, 20, 60);
 		sleep(2);
 
-                xySpeed(60, 0);
+                vectorMove(60, 0, 0);
+                sleep(2);
+
+                vectorMove(60, 70, 0);
+                sleep(2);
+
+                vectorMove(60, 270, 0);
+                sleep(2);
+
+                vectorMove(0, 10, 30);
 		sleep(2);
 
-                xySpeed(0, -60);
-                sleep(2);
-
-                xySpeed(-60, 0);
-                sleep(2);
-
-                xySpeed(0, 0);
-                sleep(2);
-*/
-
-		spin(60);
+                vectorMove(0, 10, 0);
 		sleep(2);
 
-                spin(0);
-                sleep(2);
 
-                spin(-60);
-                sleep(2);
-
-                spin(0);
-                sleep(2);
 
 	}
 	return 0;

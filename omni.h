@@ -16,6 +16,9 @@
 #define BUS		0x01
 #define ADDR		0x70
 
+#define MIN_SPEED	5//any speed not greater than this is treated as zero to protect motors 
+
+#define STOP_ALL	stopMotor(MOTOR_1);stopMotor(MOTOR_2);stopMotor(MOTOR_3);//stops pulse train for all motors, better than 0 speed
 
 void writeI2C(uint8_t Bus, uint8_t Addr, uint8_t Reg, uint8_t Data);
 void write12 (uint8_t Reg, uint16_t Val);
@@ -23,5 +26,8 @@ void initController(void);
 void motorSpeed(uint8_t Motor, int8_t Speed);
 void xySpeed(int8_t XSpeed, int8_t YSpeed);
 void spin(int8_t Spin);
+void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin);
+void vectorMove(uint8_t Velocity, int16_t Heading, int8_t Spin);
+void stopMotor(uint8_t);
 
 #endif

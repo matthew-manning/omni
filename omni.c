@@ -38,6 +38,8 @@ void motorSpeed(uint8_t Motor, int8_t Speed)
 {
 	//positive speed is clockwise
 	uint16_t Val = MOTOR_BASE + (MOTOR_FULL * Speed)/100;
+
+	(Speed == 0) ? Val=0 : 1;//cause zero speed to output no pulse, 1ms does not allways work quite right
 	write12(Motor, Val);
 }
 
@@ -56,6 +58,11 @@ void xySpeed(int8_t XSpeed, int8_t YSpeed)
 
 	CSpeed = -ASpeed - BSpeed;
 
+	//enforce minimum speeds
+	(ASpeed <= MIN_SPEED)? ASpeed = 0 : 1;
+        (BSpeed <= MIN_SPEED)? BSpeed = 0 : 1; 
+        (CSpeed <= MIN_SPEED)? CSpeed = 0 : 1; 
+
 	// Speed >> 1, then Speed << 1 to try to get rid of any residual speed that sould not be there
 	motorSpeed(MOTOR_1, ASpeed);
         motorSpeed(MOTOR_2, BSpeed);
@@ -64,8 +71,51 @@ void xySpeed(int8_t XSpeed, int8_t YSpeed)
 
 void spin(int8_t Spin)
 {
+       //spin is clockwise as positive
+
         motorSpeed(MOTOR_1, Spin);
         motorSpeed(MOTOR_2, Spin);
         motorSpeed(MOTOR_3, Spin);
 
+}
+
+void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin)
+{
+       //spin is clockwise as positive
+
+        int8_t ASpeed;
+        int8_t BSpeed;
+        int8_t CSpeed;
+
+	BSpeed = ( (Spin - XSpeed)/3 ) - ( YSpeed/(2 * cos(30) ) );
+	CSpeed = ( (Spin - XSpeed)/3 ) + ( YSpeed/(2 * cos(30) ) );
+	ASpeed = Spin - BSpeed - CSpeed;
+
+	motorSpeed(MOTOR_1, ASpeed);
+        motorSpeed(MOTOR_2, BSpeed);
+        motorSpeed(MOTOR_3, CSpeed);
+
+}
+
+void vectorMove(uint8_t Velocity, int16_t Heading, int8_t Spin)
+{
+	//Heading is given as degrees clockwise from direct ahead
+	//spin is clockwise as positive
+
+	int8_t XSpeed;
+	int8_t YSpeed;
+
+	XSpeed = Velocity * cosf((float)Heading);
+        YSpeed = Velocity * sinf((float)Heading);
+
+	moveSpin(
+		XSpeed,
+		YSpeed,
+		Spin
+		);
+}
+
+void stopMotor(uint8_t Motor)
+{
+	write12(Motor, 0);
 }
