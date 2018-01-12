@@ -21,5 +21,7 @@ void writeI2C(uint8_t Bus, uint8_t Addr, uint8_t Reg, uint8_t Data);
 void write12 (uint8_t Reg, uint16_t Val);
 void initController(void);
 void motorSpeed(uint8_t Motor, int8_t Speed);
+void xySpeed(int8_t XSpeed, int8_t YSpeed);
+void spin(int8_t Spin);
 
 #endif

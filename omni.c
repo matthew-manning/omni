@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "omni.h"
@@ -38,4 +39,33 @@ void motorSpeed(uint8_t Motor, int8_t Speed)
 	//positive speed is clockwise
 	uint16_t Val = MOTOR_BASE + (MOTOR_FULL * Speed)/100;
 	write12(Motor, Val);
+}
+
+
+//rework with float cast and round speed calculculation to get rid of residual speeds that should be zero
+void xySpeed(int8_t XSpeed, int8_t YSpeed)
+{
+	int8_t ASpeed;
+	int8_t BSpeed;
+	int8_t CSpeed;
+
+	//calc motor speeds
+	ASpeed = (2 * XSpeed) / 3;
+	
+	BSpeed = ( YSpeed / (2 * cos(30) ) ) - (XSpeed/3);
+
+	CSpeed = -ASpeed - BSpeed;
+
+	// Speed >> 1, then Speed << 1 to try to get rid of any residual speed that sould not be there
+	motorSpeed(MOTOR_1, ASpeed);
+        motorSpeed(MOTOR_2, BSpeed);
+        motorSpeed(MOTOR_3, CSpeed);
+}
+
+void spin(int8_t Spin)
+{
+        motorSpeed(MOTOR_1, Spin);
+        motorSpeed(MOTOR_2, Spin);
+        motorSpeed(MOTOR_3, Spin);
+
 }
