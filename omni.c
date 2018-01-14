@@ -44,7 +44,7 @@ void motorSpeed(uint8_t Motor, int8_t Speed)
 }
 
 
-void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
+void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity)
 {
 	//Xpart and Ypart set speed of x realitive to y, actual speed along path of travel is set by velocity
 
@@ -58,10 +58,10 @@ void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
 	//convert to degrees
 	Heading = (Heading *180)/PI;
 
-	vectorMove(Heading, Velocity, Spin); 
+	vectorMove(Heading, Velocity); 
 }
 
-/*void spin(int8_t Spin)
+void spin(int8_t Spin)
 {
        //spin is clockwise as positive
 
@@ -69,27 +69,10 @@ void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
         motorSpeed(MOTOR_2, Spin);
         motorSpeed(MOTOR_3, Spin);
 
-}*/
+}
 
-/*void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin)
-{
-       //spin is clockwise as positive
 
-        int8_t ASpeed;
-        int8_t BSpeed;
-        int8_t CSpeed;
-
-	BSpeed = ( (Spin - XSpeed)/3 ) - ( YSpeed/(2 * cos(PI/6) ) );
-	CSpeed = ( (Spin - XSpeed)/3 ) + ( YSpeed/(2 * cos(PI/6) ) );
-	ASpeed = Spin - BSpeed - CSpeed;
-
-	motorSpeed(MOTOR_1, ASpeed);
-        motorSpeed(MOTOR_2, BSpeed);
-        motorSpeed(MOTOR_3, CSpeed);
-
-}*/
-
-void vectorMove(int16_t Heading, uint8_t Velocity, int8_t Spin)
+void vectorMove(int16_t Heading, uint8_t Velocity)
 {
 	//Heading is given as degrees clockwise from direct ahead
 	//spin is clockwise as positive
@@ -104,16 +87,14 @@ void vectorMove(int16_t Heading, uint8_t Velocity, int8_t Spin)
         BSpeed = Velocity * sinf( (float) Heading - (2*PI)/3);
         CSpeed = Velocity * sinf( (float) Heading - (4*PI)/3);
 
-/*        (ASpeed <= MIN_SPEED)? ASpeed = 0 : 1;
-        (BSpeed <= MIN_SPEED)? BSpeed = 0 : 1;
-        (CSpeed <= MIN_SPEED)? CSpeed = 0 : 1;
-*/
+	//if the MIN_SPEED is too high, this code will cause issues
+	ASpeed = (abs(ASpeed) <= MIN_SPEED)? 0 : ASpeed;
+        BSpeed = (abs(BSpeed) <= MIN_SPEED)? 0 : BSpeed;
+        CSpeed = (abs(CSpeed) <= MIN_SPEED)? 0 : CSpeed;
 
 	motorSpeed(MOTOR_1, ASpeed);
         motorSpeed(MOTOR_2, BSpeed);
         motorSpeed(MOTOR_3, CSpeed);
-
-
 }
 
 void stopMotor(uint8_t Motor)

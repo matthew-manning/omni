@@ -12,19 +12,19 @@ int main( void)
 //	{
 
 //		xyTravel(100, 250, 60);
-		vectorMove(0, 60, 0);
+		vectorMove(0, 60);
 		sleep(2);
 
 //              xyTravel(300, -400, 60);
-                vectorMove(90, 60, 0);
+                vectorMove(90, 60);
                 sleep(2);
 
 //              xyTravel(-100, -250, 60);
-                vectorMove(180, 60, 0);
+                vectorMove(180, 60);
                 sleep(2);
 
 //              xyTravel(-300, 400, 60);
-                vectorMove(270, 60, 0);
+                vectorMove(270, 60);
                 sleep(2);
 		STOP_ALL
 

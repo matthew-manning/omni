@@ -29,10 +29,9 @@ void writeI2C(uint8_t Bus, uint8_t Addr, uint8_t Reg, uint8_t Data);
 void write12 (uint8_t Reg, uint16_t Val);
 void initController(void);
 void motorSpeed(uint8_t Motor, int8_t Speed);
-void xySpeed(int16_t XPart, int16_t YPart, uint8_t velocity, int8_t Spin);
-//void spin(int8_t Spin);
-//void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin);
-void vectorMove(int16_t Heading, uint8_t Velocity, int8_t Spin);
+void xySpeed(int16_t XPart, int16_t YPart, uint8_t velocity);
+void spin(int8_t Spin);
+void vectorMove(int16_t Heading, uint8_t Velocity);
 void stopMotor(uint8_t);
 void xyTravel(int32_t XDist, int32_t YDist,  uint8_t Speed);
 
