@@ -44,24 +44,36 @@ void motorSpeed(uint8_t Motor, int8_t Speed)
 }
 
 
-void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
+//rework with float cast and round speed calculculation to get rid of residual speeds that should be zero
+void xySpeed(int8_t XSpeed, int8_t YSpeed)
 {
-	//Xpart and Ypart set speed of x realitive to y, actual speed along path of travel is set by velocity
 
-	int16_t Heading;
+	printf("X is: %d\nY is: %d\n\n", XSpeed, YSpeed);
 
-	if((XPart >= 0)&&(YPart >= 0)) Heading = atanf((float)XPart/(float)YPart); 
-	else if((XPart >= 0)&&(YPart < 0)) Heading = atanf((float)YPart/(float)XPart)+(PI/2);
-	else if ((XPart<0)&&(YPart<0)) Heading = atanf((float)XPart/(float)YPart)+PI;
-	else Heading = atanf((float)YPart/(float)XPart)+((3*PI)/2);
+	int8_t ASpeed;
+	int8_t BSpeed;
+	int8_t CSpeed;
 
-	//convert to degrees
-	Heading = (Heading *180)/PI;
+	//calc motor speeds
+	ASpeed = (2 * XSpeed) / 3;
+	
+	BSpeed = ( YSpeed / (2 * cos(PI/6) ) ) - (XSpeed/3);
 
-	vectorMove(Heading, Velocity, Spin); 
+	CSpeed = -ASpeed - BSpeed;
+
+	//enforce minimum speeds
+	(ASpeed <= MIN_SPEED)? ASpeed = 0 : 1;
+        (BSpeed <= MIN_SPEED)? BSpeed = 0 : 1;
+        (CSpeed <= MIN_SPEED)? CSpeed = 0 : 1;
+
+	// Speed >> 1, then Speed << 1 to try to get rid of any residual speed that sould not be there
+	printf("A is: %d\nB is: %d\nC is: %d\n\n", ASpeed, BSpeed, CSpeed);
+	motorSpeed(MOTOR_1, ASpeed);
+        motorSpeed(MOTOR_2, BSpeed);
+        motorSpeed(MOTOR_3, CSpeed);
 }
 
-/*void spin(int8_t Spin)
+void spin(int8_t Spin)
 {
        //spin is clockwise as positive
 
@@ -69,9 +81,9 @@ void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
         motorSpeed(MOTOR_2, Spin);
         motorSpeed(MOTOR_3, Spin);
 
-}*/
+}
 
-/*void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin)
+void moveSpin(int8_t XSpeed, int8_t YSpeed, int8_t Spin)
 {
        //spin is clockwise as positive
 
@@ -87,33 +99,26 @@ void xySpeed(int16_t XPart, int16_t YPart, uint8_t Velocity, int8_t Spin)
         motorSpeed(MOTOR_2, BSpeed);
         motorSpeed(MOTOR_3, CSpeed);
 
-}*/
+}
 
-void vectorMove(int16_t Heading, uint8_t Velocity, int8_t Spin)
+void vectorMove(uint8_t Velocity, int16_t Heading, int8_t Spin)
 {
 	//Heading is given as degrees clockwise from direct ahead
 	//spin is clockwise as positive
 
-	int8_t ASpeed;
-        int8_t BSpeed;
-        int8_t CSpeed;
+	int8_t XSpeed;
+	int8_t YSpeed;
 
-	Heading = (Heading * PI) / 180;
+	Heading = (Heading * PI) / 180;//convert to radians
 
-	ASpeed = Velocity * sinf( (float) Heading);
-        BSpeed = Velocity * sinf( (float) Heading - (2*PI)/3);
-        CSpeed = Velocity * sinf( (float) Heading - (4*PI)/3);
+	XSpeed = Velocity * cosf((float)Heading);
+        YSpeed = Velocity * sinf((float)Heading);
 
-/*        (ASpeed <= MIN_SPEED)? ASpeed = 0 : 1;
-        (BSpeed <= MIN_SPEED)? BSpeed = 0 : 1;
-        (CSpeed <= MIN_SPEED)? CSpeed = 0 : 1;
-*/
-
-	motorSpeed(MOTOR_1, ASpeed);
-        motorSpeed(MOTOR_2, BSpeed);
-        motorSpeed(MOTOR_3, CSpeed);
-
-
+	moveSpin(
+		XSpeed,
+		YSpeed,
+		Spin
+		);
 }
 
 void stopMotor(uint8_t Motor)
@@ -121,8 +126,6 @@ void stopMotor(uint8_t Motor)
 	write12(Motor, 0);
 }
 
-
-/*
 void xyTravel(int32_t XDist, int32_t YDist,  uint8_t Speed)
 {
 //distances are in millimetres
@@ -149,4 +152,3 @@ void xyTravel(int32_t XDist, int32_t YDist,  uint8_t Speed)
 	usleep(1000 * Time);
 	STOP_ALL
 }
-*/

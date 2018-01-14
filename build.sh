@@ -1,1 +1,1 @@
-gcc omni.c Test.c -lm -Wall -o Test
+gcc omni.c test.c -lm -Wall -o test
